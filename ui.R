@@ -60,7 +60,16 @@ dashboardPage(
                         tabBox(width = 9,
                             tabPanel('Table',dataTableOutput('tabledebt')),
                             tabPanel('Chart',plotlyOutput('chartdebt')),
-                            tabPanel('Summary')
+                            tabPanel('Summary',
+                                     fluidRow(
+                                         box(width = 12,
+                                             valueBoxOutput('debtpayment',width = 6),
+                                             valueBoxOutput('debtsummary',width = 6),
+                                             valueBoxOutput('totalinterest',width = 6),
+                                             valueBoxOutput('totalpaid',width = 6)
+                                         )
+                                     )
+                                     )
                         )
                     )
                     )
@@ -70,5 +79,3 @@ dashboardPage(
 )
     
 
-
-#tags$a(img(src='github.png'),href='https://github.com/angeliflavio')

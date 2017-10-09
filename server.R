@@ -32,24 +32,26 @@ shinyServer(function(input,output){
     
     debt <- reactive({
         n <- 12/as.integer(input$debtfrequency)
-        amort.table(Loan = input$debt,n = n*input$yearsdebt,i = input$interestdebt/100,pf = n)
+        d <- amort.table(Loan = input$debt,n = n*input$yearsdebt,i = input$interestdebt/100,pf = n)
+        d <- as.data.frame(d$Schedule)
+        colnames(d) <- c('Months','Payment','Interest','Principal','Balance')
+        d$Months <- round(d$Months*12)
+        d
     })
     
     output$tabledebt <- renderDataTable({
         d <- debt()
-        d$Schedule
+        d
     })
     
     output$chartdebt <- renderPlotly({
         c <- debt()
-        c <- as.data.frame(c$Schedule)
-        colnames(c) <- c('Time','Peyment','Interest','Principal','Balance')
         plot_ly(c) %>% 
-            add_trace(x=~Time,y=~Principal,type='bar',name='Principal',marker=list(color='light-blue'),
+            add_trace(x=~Months,y=~Principal,type='bar',name='Principal',marker=list(color='light-blue'),
                       hoverinfo='y+name') %>% 
-            add_trace(x=~Time,y=~Interest,type='bar',name='Interest',color=I('red'),
+            add_trace(x=~Months,y=~Interest,type='bar',name='Interest',color=I('red'),
                       hoverinfo='y+name') %>% 
-            add_trace(x=~Time,y=~Balance,type='scatter',mode='lines+markers',name='Balance',yaxis='y2',
+            add_trace(x=~Months,y=~Balance,type='scatter',mode='lines+markers',name='Balance',yaxis='y2',
                       hoverinfo='y+name',color=I('black'),line=list(width=3),
                       marker=list(symbol='circle')) %>%  
             layout(yaxis=list(side='left',title='Principal + Interest',showgrid=F,zeroline=F),
@@ -57,12 +59,29 @@ shinyServer(function(input,output){
                    yaxis2=list(side='right',title='Debt Balance',overlaying='y',showgrid=F,zeroline=F))
     })
     
-    #output$debtsummary <- 
+    output$debtsummary <- renderValueBox({
+        valueBox('Debt',value = input$debt,color = 'navy')
+    }) 
+    
+    output$debtpayment <- renderValueBox({
+        p <- debt()
+        pp <- p$Payment[1]
+        valueBox('Periodical Payment',value = pp,color = 'navy')
+    })
+    
+    output$totalinterest <- renderValueBox({
+        i <- debt()
+        valueBox('Total Interest Paid',value = sum(i$Interest),color = 'navy')
+    })
+    
+    output$totalpaid <- renderValueBox({
+        t <- debt()
+        valueBox('Total Paid',value = sum(t$Payment),color = 'navy')
+    })
     
 })
 
 
-  
 
 
 
