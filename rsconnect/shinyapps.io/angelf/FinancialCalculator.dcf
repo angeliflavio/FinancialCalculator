@@ -3,8 +3,8 @@ title: FinancialCalculator
 account: angelf
 server: shinyapps.io
 appId: 222975
-bundleId: 1017357
+bundleId: 1020164
 url: https://angelf.shinyapps.io/FinancialCalculator/
-when: 1507555588.40705
+when: 1507673409.18141
 asMultiple: FALSE
 asStatic: FALSE
